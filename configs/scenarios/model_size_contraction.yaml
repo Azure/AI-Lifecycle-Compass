@@ -1,0 +1,7 @@
+# Model size contraction scenario: per-task compute intensity drops by beta
+# at contraction_year and stays flat (efficiency gains reduce model size)
+scenarios:
+  model_size_contraction:
+    enabled: true
+    contraction_year: 5
+    beta: 0.8

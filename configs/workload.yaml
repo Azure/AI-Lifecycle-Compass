@@ -1,0 +1,33 @@
+# =============================================================================
+# AI model size trends and workload demand
+# =============================================================================
+
+# --- AI model trends ---
+# https://epoch.ai/data/notable-ai-models (Epoch AI, "Data on notable AI models," 2024)
+# https://epoch.ai/gradient-updates/frontier-language-models-have-become-much-smaller (Erdil, 2024)
+model_trends:
+  trend: linear                  # Post-2023 growth turned linear per Epoch AI
+  notable_models_csv: null       # null = use bundled Epoch AI data from epoch.ai/data/notable-ai-models
+  csv_col_params: null           # Column name for parameter counts (auto-detect if null)
+  csv_col_date: null             # Column name for publication date/year (auto-detect if null)
+  csv_col_name: null             # Column name for model name (auto-detect if null)
+  csv_min_year: 2015             # Lifecycle starts 2015
+  distilled_model_size_fraction: 0.1  # 10% of full size
+  # Distillation refs:
+  #   Hsieh et al., "Distilling Step-by-Step!" 2023
+  #   https://developer.nvidia.com/blog/llm-model-pruning-and-knowledge-distillation-with-nvidia-nemo-framework
+  #   Xu et al., "A survey on knowledge distillation of large language models," 2024
+
+# --- Workload demand ---
+# 15–25% YoY AI workload growth per cloud provider earnings:
+#   https://futurumgroup.com/insights/microsoft-q3-fy-2025-earnings (Microsoft Azure)
+#   https://blog.google/inside-google/message-ceo/alphabet-earnings-q2-2024/ (Google/Alphabet)
+#   https://aimagazine.com/news/how-amazon-achieved-rocketing-sales-and-growth-from-ai (Amazon)
+workload:
+  scaling: exponential           # flat | linear | exponential
+  scaling_factor: 1.0355         # Per-quarter ~15%/yr
+  initial_demand: 4000000        # Starting demand in requests/second
+  initial_migration_fraction: 0.5  # Fraction of demand on new model in first 2 quarters
+  offload_fraction: 0.2          # Fraction of new-model demand added on new hardware
+  prefill_fraction: 0.4          # Fraction of compute for prefill (disaggregated)
+  # Patel et al., "Splitwise: Efficient generative LLM inference using phase splitting," ISCA 2024

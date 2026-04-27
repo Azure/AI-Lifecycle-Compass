@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+results
+
+es-metadata.yml
+pip.conf
+pip.ini
+azure-pipelines.yml

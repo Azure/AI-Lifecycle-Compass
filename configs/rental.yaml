@@ -1,0 +1,67 @@
+# =============================================================================
+# Rental (cloud) TCO — SemiAnalysis-style 8-component model
+# =============================================================================
+# https://newsletter.semianalysis.com/p/how-much-do-gpu-clusters-really-cost
+# https://www.clustermax.ai/tco (free calculator)
+
+rental:
+  # --- 1. GPU rental cost ---
+  gpu_cost_per_hour: 2.85        # $/GPU-hr (B200 SXM, 1-year contract)
+  num_gpus: 1024                 # Cluster size
+  contract_months: 12            # Contract term for setup amortization
+  discount_pct: 0.0              # Volume/commitment discount
+  spot_fraction: 0.0             # Fraction of GPUs on spot/preemptible
+  spot_discount_pct: 0.50        # Discount for spot instances
+  orchestration_premium_pct: 0.0  # Extra cost for managed K8s/Slurm
+
+  # --- 2. Storage ---
+  storage:
+    hot_cost_per_gb_mo: 0.12     # NVMe/parallel FS (e.g., FSx for Lustre)
+    warm_cost_per_gb_mo: 0.023   # Object storage (e.g., S3)
+    cold_cost_per_gb_mo: 0.004   # Archive (e.g., Glacier)
+    tb_per_gpu: 5.0              # Total storage per GPU
+    hot_fraction: 0.3            # Fraction of storage on hot tier
+    warm_fraction: 0.5           # Fraction on warm tier (rest = cold)
+
+  # --- 3. Networking ---
+  networking:
+    cost_per_month: 500.0        # Public IPs, firewalls, load balancers
+    egress_per_gb: 0.09          # Data egress cost
+    egress_gb_per_month: 1000.0  # Estimated monthly egress
+
+  # --- 4. Control plane ---
+  control_plane:
+    cost_per_hour: 5.0           # Per CPU node (login, scheduler, etc.)
+    num_nodes: 4
+
+  # --- 5. Support ---
+  support:
+    uplift_pct: 0.05             # 5% of base bill (AWS-style tiered)
+
+  # --- 6. Goodput ---
+  # Three modes: checkpoint_cold, checkpoint_hot, fault_tolerant
+  # Formulas from SemiAnalysis "Grand Unifying Theory of Goodput"
+  goodput:
+    mode: checkpoint_hot
+    num_failures_per_month: 4    # Hardware failures per month
+    time_to_identify_min: 5      # Time to detect failure
+    checkpoint_interval_min: 30  # Checkpoint frequency
+    job_init_time_min: 10        # Training job restart time
+    repair_time_min: 60          # MTTR: time to repair/replace node
+    failover_time_min: 2         # Hot-spare failover time
+    blast_radius_gpus: 8         # GPUs affected per failure (HGX = 8)
+    avg_job_size_gpus: 256       # Average training job size
+    network_overhead_pct: 0.0    # TorchFT GLOO overhead
+    memory_overhead_pct: 0.0     # Checkpointless memory overhead
+
+  # --- 7. Setup ---
+  setup:
+    engineering_hours: 160       # Engineer-hours for cluster setup
+    engineering_rate: 200        # $/hr per engineer
+    cluster_hours: 80            # GPU-hours spent on perf tuning
+
+  # --- 8. Debugging ---
+  debugging:
+    engineering_hours_per_month: 40  # Ongoing debug effort
+    engineering_rate: 200
+    cluster_hours_per_month: 20     # GPU-hours lost to debug jobs

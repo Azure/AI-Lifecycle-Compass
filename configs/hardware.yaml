@@ -1,0 +1,134 @@
+# =============================================================================
+# Hardware (GPU) specifications, projections, and performance model
+# =============================================================================
+# GPU specs: NVIDIA datasheets
+# Pricing: https://cyfuture.cloud/kb/gpu/what-is-the-price-of-an-nvidia-dgx-h100-system
+# Projections: https://epoch.ai/blog/trends-in-machine-learning-hardware (Hobbhahn et al., 2023)
+
+hardware:
+  gpus_per_server: 8             # NVIDIA DGX standard — https://www.nvidia.com/en-us/data-center/dgx-h100/
+  power_overhead_factor: 0.5     # DGX H100 10.2kW total for 8×700W GPUs → ~50% non-GPU overhead
+  release_interval_years: 1.0    # Recent cadence: P100→V100→A100→H100→H200→B200 ~1yr apart
+
+  # Projection mode for each GPU metric: flat | linear | exponential
+  # https://epoch.ai/blog/trends-in-machine-learning-hardware
+  projection:
+    tdp: linear
+    tflops: linear
+    mem_bw: linear
+    mem_cap: linear
+    net_bw: linear
+    cost: linear
+
+  # Known NVIDIA GPU generations (per-GPU values)
+  # Fields: code_name, quarter (release), tdp (W) per GPU, tflops (FP64 TFLOPS) per server,
+  #         mem_bw (GB/s) per server, mem_cap (GB) per GPU, cost (USD per GPU)
+  # Pricing: https://cyfuture.cloud/kb/gpu/what-is-the-price-of-an-nvidia-dgx-h100-system
+  known_gpus:
+    - code_name: P100
+      # https://cputronic.com/index.php/gpu/compare/nvidia-tesla-p100-pcie-16-gb-vs-nvidia-h200-sxm-141-gb
+      quarter: "Q1'16"
+      tdp: 300  # Watts per GPU
+      tflops: 21.22  # FP64 per server (4x P100s)
+      mem_bw: 732.2  # GB/s per server (4x P100s with NVLink)
+      mem_cap: 16  # GB per GPU
+      net_bw: 160   # GB/s NVLink 1.0 bisection BW per GPU (4 links × 40 GB/s)
+      cost: 9428  # USD per GPU
+
+    - code_name: V100
+      quarter: "Q1'18"
+      # https://images.nvidia.com/content/technologies/volta/pdf/tesla-volta-v100-datasheet-letter-fnl-web.pdf
+      tdp: 250  # Watts per GPU
+      tflops: 31.33  # FP64 per server (8x V100s)
+      tflops_fp64: 7  # FP64 per GPU (double precision)
+      tflops_fp32: 14  # FP32 per GPU (single precision)
+      mem_bw: 897  # GB/s per GPU
+      mem_cap: 32  # GB per GPU
+      net_bw: 300   # GB/s NVLink 2.0 bisection BW per GPU (6 links × 50 GB/s)
+      cost: 11458  # USD per GPU
+
+    - code_name: A100
+      # https://cputronic.com/index.php/gpu/nvidia-a100-pcie-80-gb
+      # https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/a100/pdf/nvidia-a100-datasheet.pdf
+      # https://docs.nvidia.com/dgx/dgxa100-user-guide/
+      quarter: "Q2'21"
+      tdp: 400  # Watts per GPU
+      tflops: 77.97  # FP64 per server (8x A100s)
+      tflops_fp64: 9.7  # FP64 per GPU
+      tflops_fp32: 19.5  # FP32 per GPU
+      tflops_fp16: 312  # FP16 per GPU
+      tflops_int8: 624  # INT8 per GPU
+      mem_bw: 2090  # GB/s per GPU
+      mem_cap: 80  # GB per GPU
+      net_bw: 600   # GB/s NVLink 3.0 bisection BW per GPU (12 links × 50 GB/s)
+      cost: 18000  # USD per GPU
+
+    - code_name: H100  # NVIDIA SXM5 H100
+      quarter: "Q4'23"
+      # https://resources.nvidia.com/en-us-hopper-architecture/nvidia-tensor-core-gpu-datasheet
+      # https://cputronic.com/index.php/gpu/compare/nvidia-a100-sxm4-80-gb-vs-nvidia-h100-sxm5-80-gb
+      # https://www.nvidia.com/en-us/data-center/dgx-h100/
+      tdp: 700  # Watts per GPU
+      tflops: 267.6  # FP64 per server (8x H100s)
+      tflops_fp64: 34  # FP64 per GPU
+      tflops_fp32: 65  # FP32 per GPU
+      tflops_fp16: 1979  # FP16 per GPU
+      tflops_int8: 3958  # INT8 per GPU
+      mem_bw: 3440  # GB/s per server (8x H100s with NVLink)
+      mem_cap: 80  # GB per GPU (640 GB per server)
+      net_bw: 900   # GB/s NVLink 4.0 bisection BW per GPU (18 links × 50 GB/s)
+      cost: 27000  # USD per GPU ($216k per server)
+
+    - code_name: H200
+      quarter: "Q4'24"
+      # https://nvdam.widen.net/s/nb5zzzsjdf/hpc-datasheet-sc23-h200-datasheet-3002446
+      tdp: 700  # Watts per GPU
+      tflops: 267.6  # FP64 per server (8x H200s)
+      tflops_fp64: 34  # FP64 per GPU
+      tflops_fp32: 65  # FP32 per GPU
+      tflops_fp16: 1979  # FP16 per GPU
+      tflops_int8: 3958  # INT8 per GPU
+      mem_bw: 5007  # GB/s per GPU
+      mem_cap: 141  # GB per GPU
+      net_bw: 900   # GB/s NVLink 4.0 bisection BW per GPU (same as H100)
+      cost: 35000  # USD per GPU
+
+    - code_name: B100  # This was never released, but we include it for projection
+      # https://cputronic.com/index.php/gpu/nvidia-b100
+      quarter: "Q2'25"
+      tdp: 1000  # Watts per GPU
+      tflops: 248.3  # FP16 per server?
+      mem_bw: 4200  # GB/s per GPU
+      mem_cap: 96  # GB per GPU
+      net_bw: 1800  # GB/s NVLink 5.0 bisection BW per GPU (18 links × 100 GB/s)
+      cost: 30000  # USD per GPU
+
+    - code_name: B200
+      # https://cputronic.com/index.php/gpu/nvidia-b200-sxm-192-gb
+      # https://resources.nvidia.com/en-us-dgx-systems/dgx-b200-datasheet
+      # https://www.techpowerup.com/gpu-specs/b200.c4210
+      # https://nvidianews.nvidia.com/news/nvidia-blackwell-platform-arrives-to-power-a-new-era-of-computing
+      quarter: "Q4'25"
+      tdp: 1000  # Watts per GPU
+      tflops: 248.3  # FP16 per server?
+      tflops_fp64: 37.22  # FP64 per GPU
+      tflops_fp32: 74.45  # FP32 per GPU
+      tflops_fp16: 1191.2  # FP16 per GPU
+      mem_bw: 4200  # GB/s per GPU
+      mem_cap: 192  # GB per GPU
+      net_bw: 1800  # GB/s NVLink 5.0 bisection BW per GPU (same as B100)
+      cost: 40000  # USD per GPU
+
+# --- Performance model ---
+# Roofline model: Guo et al., "System-performance and cost modeling of LLM training and inference," 2025
+#   https://arxiv.org/abs/2507.02456
+# Yuan et al., "LLM Inference Unveiled: Survey and Roofline Model Insights," 2024
+#   https://arxiv.org/abs/2402.16363
+performance:
+  model_type: simplified         # theoretical | simplified
+  # SLOs from Stojkovic et al., "DynamoLLM," HPCA 2025
+  max_ttft_s: 0.4                # SLO: max time-to-first-token (seconds)
+  max_tbt_s: 0.1                 # SLO: max time-between-tokens (seconds)
+  compute_efficiency: 0.2        # MFU: typical inference-time fraction of peak FLOPS
+  memory_efficiency: 0.6         # MBU: typical memory bandwidth utilization (decode phase)
+  network_efficiency: 1.0        # NBU: typical network bandwidth utilization (decode phase)

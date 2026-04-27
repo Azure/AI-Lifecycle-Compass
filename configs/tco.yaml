@@ -1,0 +1,57 @@
+# =============================================================================
+# TCO parameters and networking configuration
+# =============================================================================
+# Server lifetime: Wang et al., "Designing cloud servers for lower carbon," ISCA 2024
+# DC construction costs: https://dgtlinfra.com/how-much-does-it-cost-to-build-a-data-center/
+
+tco:
+  server_lifetime_years: 5       # 4–6 year IT provision cycle (Wang et al., ISCA 2024)
+  amortization_years: 5          # 3–5 year IT amortization (Wang et al., ISCA 2024)
+  utilization: 0.75              # 75% average utilization
+  power_cost_per_kwh: 0.04       # $40/MWh — https://www.gridstatus.io/
+  cooling_ratio_opex: 0.2        # PUE 1.2 → 20% cooling overhead
+  # PUE sources:
+  #   https://sustainability.aboutamazon.com/products-services/aws-cloud (AWS, PUE 1.15)
+  #   https://datacenters.google/efficiency/ (Google, PUE 1.10)
+  #   https://datacenters.microsoft.com/sustainability/efficiency/ (Microsoft, PUE 1.12)
+  cooling_ratio_capex: 0.3       # Torell, Schneider Electric — cooling CapEx ratio
+  facility_cost: 1000000
+  # Goiri et al., "Designing and Managing Data Centers Powered by Renewable Energy," ICDCS 2011
+  facility_power_capacity_w: 8000000  # 8 MW baseline
+  rack_power_w: 50000            # 50kW/rack
+  # CoreSite, "AI and the Data Center: Driving Greater Power Density"
+  rack_cost: 2000                # https://lambda.ai/blog/tesla-a100-server-total-cost-of-ownership
+  row_power_limit_w: 300000      # 300kW/row
+  maintenance_cost_per_server_per_year: 5200
+  # https://uvation.com/articles/breaking-down-the-ai-server-data-center-cost
+  power_provisioning_cost_per_watt: 7.0
+  # Fan, Weber, Barroso, "Power provisioning for a warehouse-sized computer," ISCA '07
+  cooling_provisioning_cost_per_watt: 2.5     # Torell, Schneider Electric
+  building_lifetime_years: 15                 # 15–30 year building lifecycle
+  hours_per_year: 8760                        # 365 days × 24 hours
+
+# --- Networking ---
+# https://www.nvidia.com/en-us/data-center/nvlink/
+# https://lambda.ai/blog/tesla-a100-server-total-cost-of-ownership (Lambda Labs A100 TCO)
+# InfiniBand Trade Association, https://www.infinibandta.org/
+networking:
+  type: ethernet                 # ethernet | infiniband | nvlink
+  configs:
+    ethernet:
+      capex_per_server: 300      # Lambda Labs TCO estimate
+      opex_per_server_per_year: 75
+      bandwidth_gbps: 25
+      latency_us: 8
+      performance_multiplier: 0.3
+    infiniband:
+      capex_per_server: 1800     # NVIDIA Quantum-2 IB switch pricing
+      opex_per_server_per_year: 250
+      bandwidth_gbps: 200        # InfiniBand HDR 200Gb/s
+      latency_us: 1.5
+      performance_multiplier: 0.5
+    nvlink:
+      capex_per_server: 4000     # https://www.nvidia.com/en-us/data-center/nvlink/
+      opex_per_server_per_year: 500
+      bandwidth_gbps: 900        # NVLink 4.0 (H100): 900 GB/s bidirectional
+      latency_us: 0.3
+      performance_multiplier: 1.0

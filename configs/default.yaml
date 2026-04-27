@@ -1,0 +1,19 @@
+# =============================================================================
+# DC-TCO Framework — Default Configuration
+# =============================================================================
+# This file assembles the full config from domain-specific YAML files.
+# Override individual sections via scenario YAML files or CLI args.
+
+includes:
+  - hardware.yaml       # GPU specs, projections, performance model
+  - workload.yaml       # AI model trends, workload demand
+  - tco.yaml            # TCO parameters, networking
+  - policy.yaml         # Policy and scenario shocks
+  - monte_carlo.yaml    # Monte Carlo settings
+  - rental.yaml         # Rental (cloud) TCO calculator
+
+# --- Simulation timeline ---
+simulation:
+  base_year: 2016            # Calendar year of simulation start (aligned with first known GPU)
+  total_years: 15            # Datacenter lifecycle horizon
+  quarters_per_year: 4       # Temporal resolution

@@ -1,0 +1,34 @@
+# =============================================================================
+# Policy and scenario shocks
+# =============================================================================
+
+policy:
+  name: baseline                 # baseline | replace_all | extend_lifetime | disaggregated
+  extend_lifetime_years: 0       # Extra years beyond server_lifetime (extend_lifetime policy)
+  maintenance_increase: 1.15     # Maintenance multiplier for extended servers
+  # https://uvation.com/articles/breaking-down-the-ai-server-data-center-cost
+  # Wang et al., "Designing cloud servers for lower carbon," ISCA 2024
+  skip_generations: []           # GPU code_names to skip (e.g., ["H200", "B100"])
+  oversubscription_factor: 1.0
+
+# Scenario shocks with representative parameter values
+scenarios:
+  demand_shock:
+    enabled: false
+    shock_year: 5                # Year (from start) when shock occurs
+    alpha: 3.0                   # Demand multiplier (α=3, ts=5)
+    post_shock_growth: 0.0       # Post-shock annual growth (0 = plateau)
+  model_size_contraction:
+    enabled: false
+    contraction_year: 5          # Year when per-task compute intensity drops
+    beta: 0.8                    # Compute intensity multiplier (β=0.8)
+  hw_capability_shock:
+    enabled: false
+    shock_year: 5
+    gamma: 3.0                   # Capability jump (γ=3)
+    epsilon: 0.05                # Slower post-shock growth (ε=0.05)
+  price_shock:
+    enabled: false
+    shock_year: 5
+    delta: 0.6                   # Price drop multiplier (δ=0.6)
+    eta: 0.10                    # Annual price recovery (η=0.1)

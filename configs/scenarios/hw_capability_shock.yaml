@@ -1,0 +1,7 @@
+# Hardware capability shock: GPU performance jumps by gamma at shock_year
+scenarios:
+  hw_capability_shock:
+    enabled: true
+    shock_year: 5
+    gamma: 3.0
+    epsilon: 0.05

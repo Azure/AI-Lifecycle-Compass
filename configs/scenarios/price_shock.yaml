@@ -1,0 +1,7 @@
+# Price shock: GPU costs drop by delta at shock_year, recover at eta/year
+scenarios:
+  price_shock:
+    enabled: true
+    shock_year: 5
+    delta: 0.6
+    eta: 0.10

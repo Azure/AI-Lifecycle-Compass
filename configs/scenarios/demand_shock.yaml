@@ -1,0 +1,7 @@
+# Demand shock scenario: demand jumps by alpha at shock_year, then plateaus
+scenarios:
+  demand_shock:
+    enabled: true
+    shock_year: 5
+    alpha: 3.0
+    post_shock_growth: 0.0
